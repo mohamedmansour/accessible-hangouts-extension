@@ -1,0 +1,26 @@
+{
+  "name": "Accessible Hangouts BETA for Google+",
+  "version": "0.0.1",
+  "description": "Help make hangouts more accessible for those in need!",
+  "background_page" : "background.html",
+  "options_page": "options.html",
+  "icons": { 
+	  "16": "/img/icon16.png",
+    "48": "/img/icon48.png",
+    "128": "/img/icon128.png",
+    "256": "/img/icon256.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://plus.google.com/talkgadget/mole*"
+      ],
+      "js": [
+				"/js/accessible_hangouts_injection.js"
+      ],
+      "all_frames": true
+    }
+  ],
+  "permissions": ["tts"],
+  "content_security_policy": "default-src * 'unsafe-inline'"
+}

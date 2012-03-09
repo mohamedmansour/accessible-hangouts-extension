@@ -18,6 +18,14 @@ settings = {
   set opt_out(val) {
     settings.notify('opt_out', val);
     localStorage['opt_out'] = val;
+  },
+  get volume() {
+    var key = localStorage['volume'];
+    return (typeof key == 'undefined') ? 1.0 : parseFloat(key);
+  },
+  set volume(val) {
+    settings.notify('volume', val);
+    localStorage['volume'] = val;
   }
 };
 

@@ -54,6 +54,11 @@ function onRestore() {
   setupRange('speed');
 }
 
+/**
+ * Setup the range component.
+ *
+ * @param {string} name The name of the range.
+ */
 function setupRange(name) {
   var element = $(name);
   element.addEventListener('change', function(e) {

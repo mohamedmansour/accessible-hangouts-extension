@@ -5,6 +5,8 @@
  */
  
 function AccessibleHangoutsController() {
+  var version = new VersionManager(this);
+  version.init();
   this.volume = settings.volume;
   this.pitch = settings.pitch;
   this.speed = settings.speed;

@@ -1,6 +1,6 @@
 {
-  "name": "Accessible Hangouts BETA for Google+",
-  "version": "0.0.1",
+  "name": "Accessible Hangouts for Google+",
+  "version": "1.0.0",
   "description": "Help make hangouts more accessible for those in need!",
   "background_page" : "background.html",
   "options_page": "options.html",

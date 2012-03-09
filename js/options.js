@@ -33,8 +33,14 @@ function onClose() {
  * Play test volume.
  */
 function onTestVolume() {
-  var volumeElement = $('volume');
-  bkg.controller.speak('Hello, World', {volume: parseFloat(volumeElement.value)});
+  var volume = $('volume');
+  var pitch = $('pitch');
+  var speed = $('speed');
+  bkg.controller.speak('Hello World', {
+    volume: parseFloat(volume.value),
+    pitch: parseFloat(pitch.value),
+    speed: parseFloat(speed.value)
+  });
 }
 
 /**
@@ -43,11 +49,16 @@ function onTestVolume() {
 function onRestore() {
   // Restore settings.
   $('version').innerHTML = ' Version ' + bkg.settings.version;
+  setupRange('volume');
+  setupRange('pitch');
+  setupRange('speed');
+}
 
-  var volumeElement = $('volume');
-  volumeElement.addEventListener('change', function(e) {
-    bkg.settings.volume = volumeElement.value;
-    bkg.controller.speechVolume = bkg.settings.volume;
+function setupRange(name) {
+  var element = $(name);
+  element.addEventListener('change', function(e) {
+    bkg.settings[name] = element.value;
+    bkg.controller[name] = bkg.settings[name];
   });
-  volumeElement.value = bkg.settings.volume;
+  element.value = bkg.settings[name];
 }

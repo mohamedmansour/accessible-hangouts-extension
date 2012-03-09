@@ -26,6 +26,22 @@ settings = {
   set volume(val) {
     settings.notify('volume', val);
     localStorage['volume'] = val;
+  },
+  get speed() {
+    var key = localStorage['speed'];
+    return (typeof key == 'undefined') ? 1.0 : parseFloat(key);
+  },
+  set speed(val) {
+    settings.notify('speed', val);
+    localStorage['speed'] = val;
+  },
+  get pitch() {
+    var key = localStorage['pitch'];
+    return (typeof key == 'undefined') ? 1.0 : parseFloat(key);
+  },
+  set pitch(val) {
+    settings.notify('pitch', val);
+    localStorage['pitch'] = val;
   }
 };
 

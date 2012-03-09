@@ -38,8 +38,9 @@ AccessibleHangoutsController.prototype.onExternalRequest = function(request, sen
  * @param {Object} opt Optional parameters to set.
  */
 AccessibleHangoutsController.prototype.speak = function(text, opt) {
-  var volume = opt.volume || this.volume;
-  var pitch = opt.pitch || this.pitch;
-  var speed = opt.speed || this.speed;
+  var optional = opt || {};
+  var volume = optional.volume || this.volume;
+  var pitch = optional.pitch || this.pitch;
+  var speed = optional.speed || this.speed;
   chrome.tts.speak(text, {enqueue: true, volume: volume, pitch: pitch, rate: speed});
 };

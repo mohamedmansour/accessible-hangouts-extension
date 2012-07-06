@@ -4,7 +4,7 @@
   "description": "Help make hangouts more accessible for those in need!",
   "background_page" : "background.html",
   "options_page": "options.html",
-  "icons": { 
+  "icons": {
 	  "16": "/img/icon16.png",
     "48": "/img/icon48.png",
     "128": "/img/icon128.png",
@@ -13,12 +13,11 @@
   "content_scripts": [
     {
       "matches": [
-        "https://plus.google.com/talkgadget/mole*"
+        "https://plus.google.com/hangouts/*"
       ],
       "js": [
 				"/js/accessible_hangouts_injection.js"
-      ],
-      "all_frames": true
+      ]
     }
   ],
   "permissions": ["tts"],

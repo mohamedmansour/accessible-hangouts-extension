@@ -3,34 +3,40 @@
  *
  * @author Mohamed Mansour 2012 (http://mohamedmansour.com)
  */
- 
+
 /**
  * Discovers if it finds the text input so that we can start doing business!.
  */
 function discoverChatInputElement() {
-  var chatInput = document.querySelector('textarea');
-  if (chatInput) {
-    onChatInputDiscovered(chatInput);
+  var chatFrame = document.querySelector('iframe[title="Group chat window"]');
+  if (chatFrame) {
+    var chatDom = chatFrame.contentDocument;
+    if (chatDom) {
+      var chatInput = chatDom.querySelector('textarea');
+      if (chatInput) {
+        onChatInputDiscovered(chatDom, chatInput);
+        return; // Exit so we don't loop again.
+      }
+    }
   }
-  else {
-    setTimeout(discoverChatInputElement, 1000);
-  }
+
+  setTimeout(discoverChatInputElement, 1000);
 }
 
 /**
  * Start monitoring the chat box.
  */
-function onChatInputDiscovered(chatInput) {
+function onChatInputDiscovered(chatDom, chatInput) {
   speak('Chat Speech Engine Loaded');
-  
+
   // TODO: Use MutationObservers when stable gets to v18.
-  var historyContainerDOM = document.getElementById('history');
+  var historyContainerDOM = chatDom.getElementById('chat_content');
   historyContainerDOM.addEventListener('DOMNodeInserted',
       onContentModified, false);
 }
 
 /**
- * Chat Monitoring Callback. Will return a lot of garbage. 
+ * Chat Monitoring Callback. Will return a lot of garbage.
  */
 function onContentModified(e) {
   // We only care about nodes since anything other is irrelevant.
@@ -44,12 +50,12 @@ function onContentModified(e) {
   if (chatType === 'group' || (chatType !== 'group' && chatType !== 'listitem')) {
     insertedDOM = insertedDOM.querySelector('div[role="listitem"]');
   }
-  
+
   // Not something we need, dispose. DOM changes produce a lot of garbage.
   if (!insertedDOM) {
     return;
   }
-  
+
   // Check if it is a system event.
   var fromType = insertedDOM.getAttribute('from');
   var message = insertedDOM.innerText;

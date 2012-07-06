@@ -14,7 +14,7 @@ function discoverChatInputElement() {
     if (chatDom) {
       var chatInput = chatDom.querySelector('textarea');
       if (chatInput) {
-        onChatInputDiscovered(chatDom, chatInput);
+        onChatInputDiscovered(chatDom);
         return; // Exit so we don't loop again.
       }
     }
@@ -24,27 +24,52 @@ function discoverChatInputElement() {
 }
 
 /**
- * Start monitoring the chat box.
+ * Start monitoring the chat box. Using HTML5 mutation observers. We just care
+ * about the child and subs. Since when a user chats again in his own freedom
+ * (when they chat right after they chattted), it appends to that DOM not the
+ * parent like it was done before.
+ *
+ * @param {HTMLElementDOM} chatDOM The main chat container DOM, needed since we
+ *                                 are in a contentDocument iframe.
  */
-function onChatInputDiscovered(chatDom, chatInput) {
+function onChatInputDiscovered(chatDom) {
   speak('Chat Speech Engine Loaded');
-
-  // TODO: Use MutationObservers when stable gets to v18.
-  var historyContainerDOM = chatDom.getElementById('chat_content');
-  historyContainerDOM.addEventListener('DOMNodeInserted',
-      onContentModified, false);
+  var historyContainerDOM = chatDom.getElementById('history');
+  var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+  var observer = new MutationObserver(onMutationObserver);
+  observer.observe(historyContainerDOM, { childList: true, subtree: true });
 }
 
 /**
- * Chat Monitoring Callback. Will return a lot of garbage.
+ * Listens on each DOM Mutation Event for the chat container.
+ *
+ * @param {Array<MutationRecord>} mutations An array of objects that contains the record
+ *                                          queue for the mutations.
  */
-function onContentModified(e) {
-  // We only care about nodes since anything other is irrelevant.
-  var insertedDOM = e.target;
-  if (insertedDOM.nodeType !== Node.ELEMENT_NODE || insertedDOM.nodeName !== 'DIV') {
-    return;
-  }
+function onMutationObserver(mutations) {
+  mutations.forEach(function(mutationNode) {
+    var mutationAddedNodes = mutationNode.addedNodes;
+    // No idea why the mutation API returns empty added mutations. Doesn't make
+    // sense, oh well ...
+    if (mutationAddedNodes && mutationAddedNodes.length > 0) {
+      // The first node is always the combined mutations. So we just need that
+      // since we are using the subtree attribute for observers.
+      var mainMutationNode = mutationNode.addedNodes[0];
+      // This is not needed, but incase bugs happen in Chrome (it happened in
+      // the past) we can deal with it gracefully.
+      if (mainMutationNode.nodeType === Node.ELEMENT_NODE && mainMutationNode.nodeName === 'DIV') {
+        onNewInsertedChatDOM(mainMutationNode);
+      }
+    }
+  });
+}
 
+/**
+ * Gets called whenever a new chat item has been inserted into the DOM.
+ *
+ * @param {HTMLElementDOM} insertedDOM The inserted DOM element.
+ */
+function onNewInsertedChatDOM(insertedDOM) {
   // Verify it is the chatbox we are looking for.
   var chatType = insertedDOM.getAttribute('role');
   if (chatType === 'group' || (chatType !== 'group' && chatType !== 'listitem')) {
@@ -77,6 +102,8 @@ function onContentModified(e) {
 
 /**
  * Speech Engine, speak to me!
+ *
+ * @param {String} text The phrase for the tts engine for the backend.
  */
 function speak(text) {
   chrome.extension.sendRequest({method: 'Speak', data: text});

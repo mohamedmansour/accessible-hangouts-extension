@@ -1,0 +1,9 @@
+#options {
+  padding: 20px 50px;
+}
+#options p {
+  display: inline-block;
+}
+#options p  label {
+  margin: 10px;
+}
